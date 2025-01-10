@@ -12,7 +12,7 @@
 
 :root {
   /* colors */
-  --background-color: cyan; /* TODO: white; */
+  --background-color: blue;/*cyan; /* TODO: white; */
   --light-color: #f8f8f8;
   --dark-color: #505050;
   --text-color: magenta; /* TODO: #131313; */
