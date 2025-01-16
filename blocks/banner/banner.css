@@ -2,10 +2,13 @@
     background-color: rgb(87, 87, 255);
     padding: 20px;
     text-align: center;
-    text-size-adjust: 120%;
-    text-transform: capitalize;
 }
 
 .banner img {
     width:100%;
+}
+
+.banner-text {
+    text-size-adjust: 120%;
+    text-transform: uppercase;
 }

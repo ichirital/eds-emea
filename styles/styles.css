@@ -255,3 +255,11 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+
+/* section metadata */
+main .section.light,
+main .section.banner-container {
+  background-color: rgb(197, 197, 197);
+  margin: 0;
+  padding: 40px 0;
+}
