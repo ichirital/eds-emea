@@ -1,5 +1,11 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
+import { fetchPlaceholders } from
+'../../scripts/aem.js';
+export default async function decorate(block) {
+    const placeholders = await fetchPlaceholders();
+}
+
 export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
