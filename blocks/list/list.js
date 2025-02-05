@@ -1,53 +1,83 @@
 import { fetchPlaceholders } from
 '../../scripts/aem.js';
 
-// const jsonFileUrl = 'https://main--eds-emea--ichirital.aem.page/day-5.json'; 
-const jsonFileUrl = "http://localhost:3000/day-5.json";
+const jsonFileUrl = 'https://main--eds-emea--ichirital.aem.page/day-5.json'; 
+// const jsonFileUrl = "http://localhost:3000/day-5.json";
+const itemsPerPage = 4;
 
 export default async function decorate(block) {
   const jsonData = await fetchSpreadsheetData(jsonFileUrl); // Await the result
   if (jsonData) { // Check if jsonData is not null (meaning no error occurred)
-    displayDataAsList(jsonData, block)
+    // displayDataAsList(jsonData, block)
+    showPage(1, jsonData, block); // Show the initial page
   } else {
       console.log("Data could not be fetched")
   }
 }
 
-function displayDataAsList(jsonData, block) {
+function showPage(page, jsonData, block) {
   const data = jsonData.data;
   const columns = jsonData.columns;
-
-  console.log("Data:", jsonData.data); // Access the 'data' property
-  console.log("Columns:", jsonData.columns); // Access the 'columns' property
 
   if (!data || !columns || !Array.isArray(data) || !Array.isArray(columns)) {
     console.error("Invalid JSON format.  Expected 'data' and 'columns' arrays.");
     return; // Or handle the error as needed
   }
 
-  const listContainer = document.createElement('ul'); // Create the main list container
+  let currentPage = 1; // Initialize current page
+  const numPages = Math.ceil(data.length / itemsPerPage); // Calculate total number of pages
 
-  data.forEach(item => {
-    const listItem = document.createElement('li'); // Create a list item for each data entry
+  if (page < 1 || page > numPages) return; // Check page boundaries
 
-    columns.forEach(column => {
-      const columnValue = item[column];
-      const columnLabel = document.createElement('span'); // Label for the column name
-      columnLabel.textContent = `${column}: `;
+  currentPage = page; // Update current page
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, data.length); // Handle last page
 
-      const valueSpan = document.createElement('span'); // Span for the column value
-      valueSpan.textContent = columnValue;
+  const listContainer = document.createElement('ul');
 
-      listItem.appendChild(columnLabel);
-      listItem.appendChild(valueSpan);
-      listItem.appendChild(document.createElement('br')); // Add a line break after each column
+  for (let i = startIndex; i < endIndex; i++) {
+      const item = data[i];
+      const listItem = document.createElement('li');
 
-    });
-    listContainer.appendChild(listItem); // Add the list item to the main list
-  });
+      columns.forEach(column => {
+          const columnValue = item[column];
+          const columnLabel = document.createElement('span');
+          columnLabel.textContent = `${column}: `;
 
-  block.textContent = '';
-  block.append(listContainer);
+          const valueSpan = document.createElement('span');
+          valueSpan.textContent = columnValue;
+
+          listItem.appendChild(columnLabel);
+          listItem.appendChild(valueSpan);
+          listItem.appendChild(document.createElement('br'));
+      });
+      listContainer.appendChild(listItem);
+  }
+
+  block.innerHTML = ''; // Clear previous content
+  block.appendChild(listContainer);
+
+  // Add pagination controls
+  const paginationContainer = document.createElement('div');
+  paginationContainer.classList.add('pagination');
+
+  const prevButton = document.createElement('button');
+  prevButton.textContent = "Previous";
+  prevButton.disabled = currentPage === 1;
+  prevButton.addEventListener('click', () => showPage(currentPage - 1,jsonData, block));
+  paginationContainer.appendChild(prevButton);
+
+  const pageNumberSpan = document.createElement('span');
+  pageNumberSpan.textContent = `Page ${currentPage} of ${numPages}`;
+  paginationContainer.appendChild(pageNumberSpan);
+
+  const nextButton = document.createElement('button');
+  nextButton.textContent = "Next";
+  nextButton.disabled = currentPage === numPages;
+  nextButton.addEventListener('click', () => showPage(currentPage + 1, jsonData, block));
+  paginationContainer.appendChild(nextButton);
+
+  block.appendChild(paginationContainer); // Add pagination to the container
 }
 
 async function fetchSpreadsheetData(jsonUrl) {
