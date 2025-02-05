@@ -8,10 +8,9 @@ const itemsPerPage = 4;
 export default async function decorate(block) {
   const jsonData = await fetchSpreadsheetData(jsonFileUrl); // Await the result
   if (jsonData) { // Check if jsonData is not null (meaning no error occurred)
-    // displayDataAsList(jsonData, block)
     showPage(1, jsonData, block); // Show the initial page
   } else {
-      console.log("Data could not be fetched")
+      console.log("Data could not be fetched");
   }
 }
 
