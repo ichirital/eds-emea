@@ -1,9 +1,9 @@
 indices:
-  mysite:
+  eds-emea:
     include:
-      - '/**''
+      - '/**'
     exclude:
-      - '/tools/**''
+      - '/tools/**'
     target: /query-index.json
     properties:
       title:
